@@ -156,19 +156,19 @@ namespace Sekvens
             {
                 int misses = 0;
 
-                for (var j = 0; j < reduced._basesStored && misses < allowedMismatches; j++)
+                for (var j = 0; j < reduced._basesStored && misses <= allowedMismatches; j++)
                 {
                     if ((GetMaskForBase(i + j) & reduced.GetMaskForBase(j)) == 0)
                     {
-                        if (j > reduced._basesStored - allowedMismatches)
+                        if (j >= reduced._basesStored - allowedMismatches)
                         {
-                            misses = allowedMismatches;
+                            misses = allowedMismatches + 2;
                         }
                         misses++;
                     }
                 }
 
-                if (misses < allowedMismatches)
+                if (misses <= allowedMismatches)
                 {
                     yield return new Part(i, i + reduced._basesStored);
                 }
