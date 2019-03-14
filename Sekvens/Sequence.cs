@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 
@@ -11,10 +13,23 @@ namespace Sekvens
         private int _basesStored;
         private readonly string _bases = "";
 
-        private static readonly int AMask = 0b0001;
-        private static readonly int CMask = 0b0010;
-        private static readonly int GMask = 0b0100;
-        private static readonly int TMask = 0b1000;
+        private static readonly char[] BaseLetterRepresentation;
+        static Sequence()
+        {
+            BaseLetterRepresentation = new char[16];
+            BaseLetterRepresentation[A] = 'A';
+            BaseLetterRepresentation[G] = 'G';
+            BaseLetterRepresentation[C] = 'C';
+            BaseLetterRepresentation[T] = 'T';
+        }
+
+
+        private static readonly int A = 0b0001;
+        private static readonly int C = 0b0010;
+        private static readonly int G = 0b0100;
+        private static readonly int T = 0b1000;
+        private static readonly int CAGT = 0b1111;
+
 
         public Sequence(string bases)
         {
@@ -35,20 +50,20 @@ namespace Sekvens
             {
                 var ap = i / 8;
                 var ip = i % 8;
-                var mask = CMask;
+                var mask = C;
                 switch (bases[i])
                 {
                     case 'C':
-                        mask = CMask;
+                        mask = C;
                         break;
                     case 'A':
-                        mask = AMask;
+                        mask = A;
                         break;
                     case 'T':
-                        mask = TMask;
+                        mask = T;
                         break;
                     case 'G':
-                        mask = GMask;
+                        mask = G;
                         break;
                     default: 
                         throw new ArgumentException("God forgot " + bases[i]);
@@ -59,27 +74,11 @@ namespace Sekvens
             }
         }
 
-        private GetMaskForBase(int i)
+        private int GetMaskForBase(int i)
         {
-            for (var i = 0; i < _basesStored; i++)
-            {
-                var ap = i / 8;
-                var ip = i % 8;
-                var tmp = _bits[ap] >> (ip * 4);
-                if ((tmp & GMask) > 0)
-                {
-                }
-                else if ((tmp & AMask) > 0)
-                {
-                }
-                else if ((tmp & TMask) > 0)
-                {
-                }
-                else if ((tmp & CMask) > 0)
-                {
-                }
-            }
-
+            var ap = i / 8;
+            var ip = i % 8;
+            return (_bits[ap] >> (ip * 4)) & CAGT;
         }
 
         public override string ToString()
@@ -87,25 +86,8 @@ namespace Sekvens
             StringBuilder sb = new StringBuilder();
             for (var i = 0; i < _basesStored; i++)
             {
-                var ap = i / 8;
-                var ip = i % 8;
-                var tmp = _bits[ap] >> (ip * 4);
-                if ((tmp & GMask) > 0)
-                {
-                    sb.Append('G');
-                }
-                else if ((tmp & AMask) > 0)
-                {
-                    sb.Append('A');
-                }
-                else if ((tmp & TMask) > 0)
-                {
-                    sb.Append('T');
-                }
-                else if ((tmp & CMask) > 0)
-                {
-                    sb.Append('C');
-                }
+                var mask = GetMaskForBase(i);
+                sb.Append(BaseLetterRepresentation[mask]);
             }
 
             return sb.ToString();
@@ -113,17 +95,29 @@ namespace Sekvens
 
         public IEnumerable<int> GetPositions(Sequence other)
         {
-            int match = -1;
-
-            do
+            if (other._basesStored > this._basesStored)
             {
-                match = _bases.IndexOf(other._bases, match + 1);
-                if (match > -1)
-                {
-                    yield return match;
-                }
-            } while (match != -1);
+                yield break;
+            }
 
+            var max = _basesStored - other._basesStored + 1;
+            for (var i = 0; i < max; i++)
+            {
+                bool match = true;
+
+                for (var j = 0; match && j < other._basesStored; j++)
+                {
+                    if (this.GetMaskForBase(i + j) != other.GetMaskForBase(j))
+                    {
+                        match = false;
+                    }
+                }
+
+                if (match)
+                {
+                    yield return i;
+                }
+            }
         }
     }
 }

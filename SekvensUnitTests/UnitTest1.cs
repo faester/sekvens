@@ -41,6 +41,7 @@ namespace SekvensUnitTests
         [InlineData("CAGACAGACAGACAGACAGACATA", "TAG")]
         [InlineData("CACACACA", "CA", 0, 2, 4, 6)]
         [InlineData("CATACAGA", "TA", 2)]
+        [InlineData("TA", "CATACAGATA")]
         public void IsSequence_(string longString, string subString, params int[] expected)
         {
             var sequenceA = new Sequence(longString);
