@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Text;
 
 namespace Sekvens
@@ -21,23 +18,39 @@ namespace Sekvens
             BaseLetterRepresentation[G] = 'G';
             BaseLetterRepresentation[C] = 'C';
             BaseLetterRepresentation[T] = 'T';
+            BaseLetterRepresentation[N] = 'N';
+            BaseLetterRepresentation[W] = 'W';
+            BaseLetterRepresentation[B] = 'B';
+            BaseLetterRepresentation[D] = 'D';
+            BaseLetterRepresentation[H] = 'H';
+            BaseLetterRepresentation[K] = 'K';
+            BaseLetterRepresentation[M] = 'M';
+            BaseLetterRepresentation[R] = 'R';
+            BaseLetterRepresentation[S] = 'S';
+            BaseLetterRepresentation[Y] = 'Y';
+            BaseLetterRepresentation[V] = 'V';
         }
 
 
-        private static readonly int A = 0b0001;
-        private static readonly int C = 0b0010;
-        private static readonly int G = 0b0100;
         private static readonly int T = 0b1000;
-        private static readonly int CAGT = 0b1111;
+        private static readonly int A = 0b0100;
+        private static readonly int C = 0b0010;
+        private static readonly int G = 0b0001;
+        private static readonly int W = A | T;
+        private static readonly int N = A | C | G | T;
+        private static readonly int B = C | G | T;
+        private static readonly int D = A | G | T;
+        private static readonly int H = A | C | T;
+        private static readonly int K = G | T;
+        private static readonly int M = A | C;
+        private static readonly int R = A | G;
+        private static readonly int S = C | G;
+        private static readonly int Y = C | T;
+        private static readonly int V = A | C | G;
 
 
         public Sequence(string bases)
         {
-            if (!bases.All(x => x == 'C' || x == 'A' || x == 'T' || x == 'G'))
-            {
-                throw new ArgumentException("");
-            }
-
             _bits = new int[bases.Length / 8 + 1];
             _basesStored = bases.Length;
 
@@ -53,19 +66,22 @@ namespace Sekvens
                 var mask = C;
                 switch (bases[i])
                 {
-                    case 'C':
-                        mask = C;
-                        break;
-                    case 'A':
-                        mask = A;
-                        break;
-                    case 'T':
-                        mask = T;
-                        break;
-                    case 'G':
-                        mask = G;
-                        break;
-                    default: 
+                    case 'C': mask = C; break;
+                    case 'A': mask = A; break;
+                    case 'T': mask = T; break;
+                    case 'G': mask = G; break;
+                    case 'W': mask = W; break;
+                    case 'N': mask = N; break;
+                    case 'H': mask = H; break;
+                    case 'K': mask = K; break;
+                    case 'M': mask = M; break;
+                    case 'B': mask = B; break;
+                    case 'D': mask = D; break;
+                    case 'R': mask = R; break;
+                    case 'S': mask = S; break;
+                    case 'V': mask = V; break;
+                    case 'Y': mask = Y; break;
+                    default:
                         throw new ArgumentException("God forgot " + bases[i]);
                 }
 
@@ -78,7 +94,7 @@ namespace Sekvens
         {
             var ap = i / 8;
             var ip = i % 8;
-            return (_bits[ap] >> (ip * 4)) & CAGT;
+            return (_bits[ap] >> (ip * 4)) & N;
         }
 
         public override string ToString()
@@ -107,7 +123,7 @@ namespace Sekvens
 
                 for (var j = 0; match && j < other._basesStored; j++)
                 {
-                    if (this.GetMaskForBase(i + j) != other.GetMaskForBase(j))
+                    if ((GetMaskForBase(i + j) & other.GetMaskForBase(j)) == 0)
                     {
                         match = false;
                     }

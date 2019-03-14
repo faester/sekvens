@@ -36,12 +36,25 @@ namespace SekvensUnitTests
         [InlineData("CAGACATACAGA", "TA", 6)]
         [InlineData("CAGACAGACAGACAGACAGACATA", "TA", 22)]
         [InlineData("CAGACAGACAGACAGACAGACATA", "CTA")]
-        [InlineData("CAGACAGACTAGACAGACAGACATA", "CTAG", 8)]
+        [InlineData("CAGACAGACTAGACAGACAGACATACAAACAGACATAACAGACATAACAGATTGTGGTATTATATTTTTTTTAACAGACATAACAGATTGTGGTACCGCGGGC", "TAACAGACATAACAGATTGTGGT", 35, 71)]
         [InlineData("CAGACAGACTAGACAGACAGACATA", "CA", 0, 4, 13, 17, 21)]
         [InlineData("CAGACAGACAGACAGACAGACATA", "TAG")]
         [InlineData("CACACACA", "CA", 0, 2, 4, 6)]
+        [InlineData("CACANTGAGGACAGT", "CA", 0, 2, 11)]
         [InlineData("CATACAGA", "TA", 2)]
+        [InlineData("CATACAGACGGCGCACTCACCAC", "TA", 2)]
         [InlineData("TA", "CATACAGATA")]
+        [InlineData("CATG", "W", 1, 2)]
+        [InlineData("CATG", "N", 0, 1, 2, 3)]
+        [InlineData("CATG", "V", 0, 1, 3)]
+        [InlineData("CATG", "Y", 0, 2)]
+        [InlineData("CATG", "S", 0, 3)]
+        [InlineData("CATG", "R", 1, 3)]
+        [InlineData("CATG", "M", 0, 1)]
+        [InlineData("CATG", "K", 2, 3)]
+        [InlineData("CATG", "H", 0, 1, 2)]
+        [InlineData("CATG", "D", 1, 2, 3)]
+        [InlineData("CATG", "B", 0, 2, 3)]
         public void IsSequence_(string longString, string subString, params int[] expected)
         {
             var sequenceA = new Sequence(longString);
@@ -65,6 +78,23 @@ namespace SekvensUnitTests
         [InlineData("CAGACAGACTAGACAGACAGACATA")]
         [InlineData("CAGACAGACATAGACAGACAGACATA")]
         [InlineData("CATACAGA")]
+        [InlineData("CAWACAGA")]
+        [InlineData("CANACAGA")]
+        [InlineData("TACHWNBDHKMRSYV")]
+        [InlineData("T")]
+        [InlineData("A")]
+        [InlineData("H")]
+        [InlineData("W")]
+        [InlineData("N")]
+        [InlineData("B")]
+        [InlineData("D")]
+        [InlineData("K")]
+        [InlineData("M")]
+        [InlineData("R")]
+        [InlineData("S")]
+        [InlineData("Y")]
+        [InlineData("V")]
+        [InlineData("KMRSYV")]
         [InlineData("")]
         public void ToString_CanReverseEncode(string longString)
         {
@@ -89,12 +119,14 @@ namespace SekvensUnitTests
         [InlineData("CAGACAGACTAGACAGACAGACATA")]
         [InlineData("CAGACAGACATAGACAGACAGACATA")]
         [InlineData("CATACAGA")]
-        [InlineData("")]
+        [InlineData("W")]
+        [InlineData("N")]
         public void Ctor_ThenInitializeWithoutExceptions(string longString)
         {
             Action act = () => new Sequence(longString);
 
             act.Should().NotThrow<Exception>();
         }
+
     }
 }
