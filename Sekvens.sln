@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sekvens", "Sekvens\Sekvens.csproj", "{98063AB8-5902-46FB-AFAA-8B7A2C79E3B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{98063AB8-5902-46FB-AFAA-8B7A2C79E3B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98063AB8-5902-46FB-AFAA-8B7A2C79E3B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98063AB8-5902-46FB-AFAA-8B7A2C79E3B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98063AB8-5902-46FB-AFAA-8B7A2C79E3B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DE233BD5-3F4C-4F95-9F66-EC0971F0F7D3}
+	EndGlobalSection
+EndGlobal
