@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Sekvens;
@@ -8,17 +9,6 @@ namespace SekvensUnitTests
 {
     public class SequenceTest
     {
-
-        [Fact]
-        public void IsSequence()
-        {
-            var sequenceA = new Sequence("CATAGCCCACCAGGAGGCA");
-
-            var actual = sequenceA.GetPositions(new Sequence("TAG"));
-
-            actual.Should().BeEquivalentTo(new[] { 2 });
-        }
-
         [Fact]
         public void IsSequence_B()
         {
@@ -55,7 +45,7 @@ namespace SekvensUnitTests
         [InlineData("CATG", "H", 0, 1, 2)]
         [InlineData("CATG", "D", 1, 2, 3)]
         [InlineData("CATG", "B", 0, 2, 3)]
-        public void IsSequence_(string longString, string subString, params int[] expected)
+        public void IsSequence(string longString, string subString, params int[] expected)
         {
             var sequenceA = new Sequence(longString);
 
@@ -102,7 +92,7 @@ namespace SekvensUnitTests
 
             var actual = sequenceA.ToString();
 
-            actual.ToString().Should().Be(longString);
+            actual.Should().Be(longString);
         }
 
         [Theory]
@@ -128,5 +118,36 @@ namespace SekvensUnitTests
             act.Should().NotThrow<Exception>();
         }
 
+        [Fact]
+        public void FindApproximateMatch()
+        {
+            Sequence searchedString = "CAGTTGAGAGTGGTGTGGTGATTAGGTGAATA";
+            Sequence longString = "CAGTTGAGAATCAGTTGAGAGTGGTGTGGTGATTAGGTGAATAACCGCTTCGCTTCGGCTTGCTCAGTTGAGAATACGTATTCAGTTGAGAGTGGTGTGGTGATTAGGTGAATAAGGATAGCAGTTGAGAGTGGTGTGGTGATTAGGTGAATAGATTAG";
+
+            var result = longString
+                .FindApproximateMatch(searchedString
+                    , ignoreFirst: 2
+                    , allowedMismatches: 5
+                    , suffixMustMatchLength: 3
+                );
+
+            result.Should().BeEquivalentTo(new[] { new Part(13, 43), new Part(84, 114), new Part(123, 153) });
+        }
+
+        [Fact]
+        public void FindApproximateMatch_WithErrors()
+        {
+            Sequence searchedString = "CAGTTGAGAGTGGTGTGGTGATTAGGTGAATA";
+            Sequence longString = "CAGTTGAGAAT-TTGTTGAGAGTGGTGTGGTGATTAGGTGAATA-ACCGCTTCGCTTCGGCTTGCTCAGTTGAGAATACGTATT-CAGTTGAGAGTGGTGTGGTGATTAGGTGAATA-AGGATAG-CAGTTGAGAGTGGTGTGGTGATTAGGTGAATA-GATTAGGTCGTCGGCTCGCCAGTTGAGAGTGGTGTGGTGATTAGGTGAATAGTCGGCTGCGGCTTGC";
+
+            var result = longString
+                .FindApproximateMatch(searchedString
+                    , ignoreFirst: 2
+                    , allowedMismatches: 5
+                    , suffixMustMatchLength: 3
+                );
+
+            result.Should().BeEquivalentTo(new[] { new Part(13, 43), new Part(84, 114), new Part(123, 153), new Part(174, 204) });
+        }
     }
 }

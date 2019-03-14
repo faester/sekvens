@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Sekvens
 {
     public class Sequence
     {
+        public static implicit operator Sequence(string bases)
+        {
+            return new Sequence(bases);
+        }
+
         private int[] _bits;
         private int _basesStored;
         private readonly string _bases = "";
@@ -132,6 +138,39 @@ namespace Sekvens
                 if (match)
                 {
                     yield return i;
+                }
+            }
+        }
+
+        public IEnumerable<Part> FindApproximateMatch(Sequence mustMatch, int ignoreFirst, int allowedMismatches, int suffixMustMatchLength)
+        {
+            if (mustMatch._basesStored > this._basesStored)
+            {
+                yield break;
+            }
+
+            Sequence reduced = mustMatch.ToString().Substring(ignoreFirst);
+
+            var max = _basesStored - reduced._basesStored + 1;
+            for (var i = 0; i < max; i++)
+            {
+                int misses = 0;
+
+                for (var j = 0; j < reduced._basesStored && misses < allowedMismatches; j++)
+                {
+                    if ((GetMaskForBase(i + j) & reduced.GetMaskForBase(j)) == 0)
+                    {
+                        if (j > reduced._basesStored - allowedMismatches)
+                        {
+                            misses = allowedMismatches;
+                        }
+                        misses++;
+                    }
+                }
+
+                if (misses < allowedMismatches)
+                {
+                    yield return new Part(i, i + reduced._basesStored);
                 }
             }
         }
